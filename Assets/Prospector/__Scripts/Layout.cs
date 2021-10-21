@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-
 public class SlotDef
 {
     public float x;
@@ -20,7 +19,6 @@ public class SlotDef
 
 public class Layout : MonoBehaviour
 {
-
     public PT_XMLReader xmlr;
     public PT_XMLHashtable xml;
     public Vector2 multiplier;
@@ -80,20 +78,18 @@ public class Layout : MonoBehaviour
                     }
                     slotDefs.Add(tSD);
                     break;
+
+                case "drawpile":
+                    tSD.stagger.x = float.Parse(slotsX[i].att("xstagger"));
+                    drawPile = tSD;
+                    break;
+
+                case "discardpile":
+                    discardPile = tSD;
+                    break;
             }
         }
 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
