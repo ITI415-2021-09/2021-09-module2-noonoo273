@@ -32,13 +32,12 @@ public class Prospector : MonoBehaviour {
 
 	void Start() {
 		deck = GetComponent<Deck> ();
-		deck.InitDeck (deckXML.text);
+		deck.InitDeck(deckXML.text);
 
 		layout = GetComponent<Layout>();
 		layout.ReadLayout(layoutXML.text);
 
 		drawPile = ConvertListCardsToListCardProspectors(deck.cards);
-
 		LayoutGame();
 	}
 	List<CardProspector> ConvertListCardsToListCardProspectors(List<Card> lCD)
@@ -98,7 +97,6 @@ public class Prospector : MonoBehaviour {
 		cd.state = eCardState.discard;
 		discardPile.Add(cd);
 		cd.transform.parent = layoutAnchor;
-
 		cd.transform.localPosition = new Vector3(
 			layout.multiplier.x * layout.discardPile.x,
 			layout.multiplier.y * layout.discardPile.y,
@@ -129,6 +127,7 @@ public class Prospector : MonoBehaviour {
 	void UpdateDrawPile()
     {
 		CardProspector cd;
+
 		for(int i=0; i<drawPile.Count; i++)
         {
 			cd = drawPile[i];
@@ -170,7 +169,7 @@ public class Prospector : MonoBehaviour {
                 {
 					validMatch = false;
                 }
-				if (!validMatch) return;
+				if (!validMatch) { return; }
 
 				tableau.Remove(cd);
 				MoveToTarget(cd);
@@ -180,15 +179,24 @@ public class Prospector : MonoBehaviour {
 
 	public bool AdjacentRank(CardProspector c0, CardProspector c1)
     {
-		if (!c0.faceUp || c1.faceUp) return(false);
+		if (!c0.faceUp || c1.faceUp) 
+		{ 
+			return (false); 
+		}
 
 		if (Mathf.Abs(c0.rank - c1.rank) == 1)
         {
 			return (true);
         }
 
-		if (c0.rank == 1 && c1.rank == 13) return (true);
-		if (c0.rank == 13 && c1.rank == 1) return (true);
+		if (c0.rank == 1 && c1.rank == 13)
+		{
+			return (true);
+		}
+		if (c0.rank == 13 && c1.rank == 1)
+		{
+			return (true);
+		}
 
 		return (false);
 	}
