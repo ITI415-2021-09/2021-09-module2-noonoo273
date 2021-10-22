@@ -42,6 +42,7 @@ public class FloatingScore : MonoBehaviour
 
     public GameObject reportFinishTo = null;
     private RectTransform rectTrans;
+    internal object reportFinshTo;
     private Text txt;
 
     public void Init(List<Vector2> ePts, float eTimeS=0, float eTimeD = 1)
