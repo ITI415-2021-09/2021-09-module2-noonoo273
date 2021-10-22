@@ -105,8 +105,11 @@ public class Prospector : MonoBehaviour {
 				tCP.hiddenBy.Add(cp);
             }
         }
-
+		
+		// Set up the initial target card
 		MoveToTarget(Draw());
+
+		// Set up the Draw pile
 		UpdateDrawPile();
     }
 
@@ -144,30 +147,29 @@ public class Prospector : MonoBehaviour {
     {
 		cd.state = eCardState.discard;
 		discardPile.Add(cd);
-		cd.transform.parent = layoutAnchor;
-		cd.transform.localPosition = new Vector3(
-			layout.multiplier.x * layout.discardPile.x,
-			layout.multiplier.y * layout.discardPile.y,
-			-layout.discardPile.layerID+0.5f);
+		cd.transform.parent = layoutAnchor; // update its transform parent
+		
+		// position this card on the discardPile
+		cd.transform.localPosition = new Vector3(layout.multiplier.x * layout.discardPile.x, layout.multiplier.y * layout.discardPile.y, -layout.discardPile.layerID+0.5f);
 
 		cd.faceUp = true;
-
+		// place it on top of the pile for depth sorting
 		cd.SetSortingLayerName(layout.discardPile.layerName);
 		cd.SetSortOrder(-100 + discardPile.Count);
     }
 
 	void MoveToTarget(CardProspector cd)
 	{
+		// if there is a currently a target card, move it to discardPile
 		if (target != null) MoveToDiscard(target);
-		target = cd;
+		target = cd; // cd is the new target
 		cd.state = eCardState.target;
 		cd.transform.parent = layoutAnchor;
+		// Move to the target position
 		cd.transform.localPosition = new Vector3(
-			layout.multiplier.x * layout.discardPile.x,
-			layout.multiplier.y * layout.discardPile.y,
-			-layout.discardPile.layerID);
-
-		cd.faceUp = true;
+			layout.multiplier.x * layout.discardPile.x, layout.multiplier.y * layout.discardPile.y, -layout.discardPile.layerID);
+		cd.faceUp = true; // make it face up
+		// set the depth sorting
 		cd.SetSortingLayerName(layout.discardPile.layerName);
 		cd.SetSortOrder(0);
 	}
@@ -222,9 +224,9 @@ public class Prospector : MonoBehaviour {
                 }
 				if (!validMatch) { return; }
 
-				tableau.Remove(cd);
-				MoveToTarget(cd);
-				SetTableauFaces();
+				tableau.Remove(cd);// remove from tableau list
+				MoveToTarget(cd); // make it target card
+				SetTableauFaces(); // update tableau card face-ups
 				ScoreManager.EVENT(eScoreEvent.mine);
 
 				FloatingScoreHandler(eScoreEvent.mine);
@@ -275,7 +277,7 @@ public class Prospector : MonoBehaviour {
 
 	public bool AdjacentRank(CardProspector c0, CardProspector c1)
     {
-		if (!c0.faceUp || c1.faceUp) 
+		if (!c0.faceUp || !c1.faceUp) 
 		{ 
 			return (false); 
 		}
