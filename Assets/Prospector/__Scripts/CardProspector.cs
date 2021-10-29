@@ -21,7 +21,7 @@ public class CardProspector : Card
 
     override public void OnMouseUpAsButton()
     {
-        GolfSolitaire.S.CardClicked(this);
+        Prospector.S.CardClicked(this);
         base.OnMouseUpAsButton();
     }
 
