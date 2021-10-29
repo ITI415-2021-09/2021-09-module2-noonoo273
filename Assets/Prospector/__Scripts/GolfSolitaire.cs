@@ -44,6 +44,13 @@ public class GolfSolitaire : MonoBehaviour
 
 		deck = GetComponent<Deck>();
 		deck.InitDeck(deckXML.text);
+		Deck.Shuffle(ref deck.cards); // This shuffles the deck by reference
+
+		Card c;
+		for (int cNum = 0; cNum < deck.cards.Count; cNum++)
+        {
+			c = deck.cards[cNum];
+        }
 
 		layout = GetComponent<Layout>();
 		layout.ReadLayout(layoutXML.text);
@@ -204,11 +211,12 @@ public class GolfSolitaire : MonoBehaviour
 		switch (cd.state)
 		{
 			case eCardState.target:
+				// Clicking the card does nothing
 				break;
 
 			case eCardState.drawpile:
-				MoveToDiscard(target);
-				MoveToTarget(Draw());
+				MoveToDiscard(target); // moves target to discard pile
+				MoveToTarget(Draw()); // moves the next drawn card to target
 				UpdateDrawPile();
 				ScoreManager.EVENT(eScoreEvent.draw);
 
@@ -219,6 +227,7 @@ public class GolfSolitaire : MonoBehaviour
 				bool validMatch = true;
 				if (!cd.faceUp)
 				{
+					// if card is face down, not valid
 					validMatch = false;
 				}
 				if (!AdjacentRank(cd, target))
@@ -280,16 +289,19 @@ public class GolfSolitaire : MonoBehaviour
 
 	public bool AdjacentRank(CardProspector c0, CardProspector c1)
 	{
+		// if either card is face down, it's not adjacent
 		if (!c0.faceUp || !c1.faceUp)
 		{
 			return (false);
 		}
 
+		// if they are 1 apart they are adjacent
 		if (Mathf.Abs(c0.rank - c1.rank) == 1)
 		{
 			return (true);
 		}
 
+		// if one is Ace and other is King, they are adjacent
 		if (c0.rank == 1 && c1.rank == 13)
 		{
 			return (true);
