@@ -25,11 +25,11 @@ public class Prospector : MonoBehaviour {
 	[Header("Set Dynamically")]
 	public Deck	deck;
 	public Layout layout;
-	public List<CardProspector> drawPile;
+	public List<GolfProspector> drawPile;
 	public Transform layoutAnchor;
-	public CardProspector target;
-	public List<CardProspector> tableau;
-	public List<CardProspector> discardPile;
+	public GolfProspector target;
+	public List<GolfProspector> tableau;
+	public List<GolfProspector> discardPile;
 	public FloatingScore fsRun;
 
 	void Awake(){
@@ -55,21 +55,21 @@ public class Prospector : MonoBehaviour {
 		drawPile = ConvertListCardsToListCardProspectors(deck.cards);
 		LayoutGame();
 	}
-	List<CardProspector> ConvertListCardsToListCardProspectors(List<Card> lCD)
+	List<GolfProspector> ConvertListCardsToListCardProspectors(List<Card> lCD)
 	{
-		List<CardProspector> lCP = new List<CardProspector>();
-		CardProspector tCP;
+		List<GolfProspector> lCP = new List<GolfProspector>();
+		GolfProspector tCP;
 		foreach (Card tCD in lCD)
 		{
-			tCP = tCD as CardProspector;
+			tCP = tCD as GolfProspector;
 			lCP.Add(tCP);
 		}
 		return (lCP);
 	}
 
-	CardProspector Draw()
+	GolfProspector Draw()
     {
-		CardProspector cd = drawPile[0];
+		GolfProspector cd = drawPile[0];
 		drawPile.RemoveAt(0);
 		return (cd);
     }
@@ -83,7 +83,7 @@ public class Prospector : MonoBehaviour {
 			layoutAnchor.transform.position = layoutCenter;
         }
 
-		CardProspector cp;
+		GolfProspector cp;
 		foreach (SlotDef tSD in layout.slotDefs)
         {
 			cp = Draw();
@@ -104,7 +104,7 @@ public class Prospector : MonoBehaviour {
 			tableau.Add(cp);
         }
 
-		foreach(CardProspector tCP in tableau)
+		foreach(GolfProspector tCP in tableau)
         {
 			foreach(int hid in tCP.slotDef.hiddenBy)
             {
@@ -120,9 +120,9 @@ public class Prospector : MonoBehaviour {
 		UpdateDrawPile();
     }
 
-	CardProspector FindCardByLayoutID(int layoutID)
+	GolfProspector FindCardByLayoutID(int layoutID)
     {
-		foreach(CardProspector tCP in tableau)
+		foreach(GolfProspector tCP in tableau)
         {
 			if(tCP.layoutID == layoutID)
             {
@@ -135,10 +135,10 @@ public class Prospector : MonoBehaviour {
 
 	void SetTableauFaces()
     {
-		foreach(CardProspector cd in tableau)
+		foreach(GolfProspector cd in tableau)
         {
 			bool faceUp = true;
-			foreach(CardProspector cover in cd.hiddenBy)
+			foreach(GolfProspector cover in cd.hiddenBy)
             {
 				if (cover.state == eCardState.tableau)
                 {
@@ -150,7 +150,7 @@ public class Prospector : MonoBehaviour {
         }
     }
 
-	void MoveToDiscard(CardProspector cd)
+	void MoveToDiscard(GolfProspector cd)
     {
 		cd.state = eCardState.discard;
 		discardPile.Add(cd);
@@ -165,7 +165,7 @@ public class Prospector : MonoBehaviour {
 		cd.SetSortOrder(-100 + discardPile.Count);
     }
 
-	void MoveToTarget(CardProspector cd)
+	void MoveToTarget(GolfProspector cd)
 	{
 		// if there is a currently a target card, move it to discardPile
 		if (target != null) MoveToDiscard(target);
@@ -183,7 +183,7 @@ public class Prospector : MonoBehaviour {
 
 	void UpdateDrawPile()
     {
-		CardProspector cd;
+		GolfProspector cd;
 
 		for(int i=0; i<drawPile.Count; i++)
         {
@@ -203,7 +203,7 @@ public class Prospector : MonoBehaviour {
         }
     }
 
-	public void CardClicked(CardProspector cd)
+	public void CardClicked(GolfProspector cd)
     {
         switch (cd.state)
         {
@@ -254,7 +254,7 @@ public class Prospector : MonoBehaviour {
         {
 			return;
         }
-		foreach(CardProspector cd in tableau)
+		foreach(GolfProspector cd in tableau)
         {
 			if(AdjacentRank(cd, target))
             {
@@ -282,7 +282,7 @@ public class Prospector : MonoBehaviour {
 		SceneManager.LoadScene("_Prospector_Scene_0");
     }
 
-	public bool AdjacentRank(CardProspector c0, CardProspector c1)
+	public bool AdjacentRank(GolfProspector c0, GolfProspector c1)
     {
 		if (!c0.faceUp || !c1.faceUp) 
 		{ 
