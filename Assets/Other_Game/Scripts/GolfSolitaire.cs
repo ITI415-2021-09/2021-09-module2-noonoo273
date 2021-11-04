@@ -40,7 +40,7 @@ public class GolfSolitaire : MonoBehaviour
 
 	void Start()
 	{
-		//ScoreBoard.S.score = ScoreManager.SCORE;
+		ScoreBoard.S.score = ScoreManager.SCORE;
 
 		deck = GetComponent<Deck>();
 		deck.InitDeck(deckXML.text);
@@ -219,8 +219,8 @@ public class GolfSolitaire : MonoBehaviour
 				MoveToDiscard(target); // moves target to discard pile
 				MoveToTarget(Draw()); // moves the next drawn card to target
 				UpdateDrawPile();
+				
 				ScoreManager.EVENT(eScoreEvent.draw);
-
 				FloatingScoreHandler(eScoreEvent.draw);
 				break;
 
@@ -240,8 +240,8 @@ public class GolfSolitaire : MonoBehaviour
 				tableau.Remove(cd);// remove from tableau list
 				MoveToTarget(cd); // make it target card
 				SetTableauFaces(); // update tableau card face-ups
+				
 				ScoreManager.EVENT(eScoreEvent.mine);
-
 				FloatingScoreHandler(eScoreEvent.mine);
 				break;
 		}
@@ -285,7 +285,7 @@ public class GolfSolitaire : MonoBehaviour
 			FloatingScoreHandler(eScoreEvent.gameLoss);
 		}
 
-		SceneManager.LoadScene("_Prospector_Scene_0");
+		SceneManager.LoadScene("_Other_Game_Scene_0");
 	}
 
 	public bool AdjacentRank(GolfProspector c0, GolfProspector c1)
@@ -347,7 +347,7 @@ public class GolfSolitaire : MonoBehaviour
 				fsPts.Add(fsPosMid);
 				fs = ScoreBoard.S.CreateFloatingScore(ScoreManager.CHAIN, fsPts);
 
-				fs.fontSizes = new List<float>(new float[] { 4, 5, 28 });
+				fs.fontSizes = new List<float>(new float[] { 4, 50, 28 });
 				if (fsRun == null)
 				{
 					fsRun = fs;

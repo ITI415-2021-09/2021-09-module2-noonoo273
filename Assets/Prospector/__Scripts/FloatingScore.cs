@@ -60,13 +60,11 @@ public class FloatingScore : MonoBehaviour
             return;
         }
 
-        if(eTimeS == 0)
-        {
+        if (eTimeS == 0)
             eTimeS = Time.time;
             timeStart = eTimeS;
             timeDuration = eTimeD;
-        }
-
+            
         state = eFSState.pre;
     }
 
@@ -75,11 +73,6 @@ public class FloatingScore : MonoBehaviour
         score += fs.score;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()

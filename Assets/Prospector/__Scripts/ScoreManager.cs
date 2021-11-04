@@ -24,7 +24,7 @@ public class ScoreManager : MonoBehaviour
     public int scoreRun = 0;
     public int score = 0;
 
-    private void Awake()
+    void Awake()
     {
         if (S == null)
         {
@@ -34,6 +34,7 @@ public class ScoreManager : MonoBehaviour
         {
             Debug.LogError("ERROR: ScoreManager.Awake(): S is already set!");
         }
+
         if (PlayerPrefs.HasKey("ProspectorHighScore"))
         {
             HIGH_SCORE = PlayerPrefs.GetInt("ProspectorHighScore");
@@ -78,7 +79,7 @@ public class ScoreManager : MonoBehaviour
             case eScoreEvent.gameLoss:
                 if (HIGH_SCORE <= score)
                 {
-                    print("You got the High Score: " + score);
+                    print("You got the High Score! High Score: " + score);
                     HIGH_SCORE = score;
                     PlayerPrefs.SetInt("ProspectorHighScore", score);
                 }
