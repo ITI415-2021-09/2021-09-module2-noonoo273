@@ -5,9 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class Prospector : MonoBehaviour {
+public class Prospector : MonoBehaviour
+{
 
-	static public Prospector 	S;
+	static public Prospector S;
 
 	[Header("Set in Inspector")]
 	public TextAsset deckXML;
@@ -23,7 +24,7 @@ public class Prospector : MonoBehaviour {
 
 
 	[Header("Set Dynamically")]
-	public Deck	deck;
+	public Deck deck;
 	public Layout layout;
 	public List<GolfProspector> drawPile;
 	public Transform layoutAnchor;
@@ -32,14 +33,16 @@ public class Prospector : MonoBehaviour {
 	public List<GolfProspector> discardPile;
 	public FloatingScore fsRun;
 
-	void Awake(){
+	void Awake()
+	{
 		S = this;
 	}
 
-	void Start() {
+	void Start()
+	{
 		ScoreBoard.S.score = ScoreManager.SCORE;
 
-		deck = GetComponent<Deck> ();
+		deck = GetComponent<Deck>();
 		deck.InitDeck(deckXML.text);
 		Deck.Shuffle(ref deck.cards); // This shuffles the deck by reference
 
@@ -68,30 +71,30 @@ public class Prospector : MonoBehaviour {
 	}
 
 	GolfProspector Draw()
-    {
+	{
 		GolfProspector cd = drawPile[0];
 		drawPile.RemoveAt(0);
 		return (cd);
-    }
+	}
 
 	void LayoutGame()
-    {
-		if(layoutAnchor == null)
-        {
+	{
+		if (layoutAnchor == null)
+		{
 			GameObject tGO = new GameObject("_LayoutAnchor");
 			layoutAnchor = tGO.transform;
 			layoutAnchor.transform.position = layoutCenter;
-        }
+		}
 
 		GolfProspector cp;
 		foreach (SlotDef tSD in layout.slotDefs)
-        {
+		{
 			cp = Draw();
 			cp.faceUp = tSD.faceUp;
 			cp.transform.parent = layoutAnchor;
 			cp.transform.localPosition = new Vector3(
-				layout.multiplier.x*tSD.x,
-				layout.multiplier.y*tSD.y,
+				layout.multiplier.x * tSD.x,
+				layout.multiplier.y * tSD.y,
 				-tSD.layerID);
 
 			cp.layoutID = tSD.id;
@@ -102,68 +105,68 @@ public class Prospector : MonoBehaviour {
 			cp.SetSortingLayerName(tSD.layerName);
 
 			tableau.Add(cp);
-        }
+		}
 
-		foreach(GolfProspector tCP in tableau)
-        {
-			foreach(int hid in tCP.slotDef.hiddenBy)
-            {
+		foreach (GolfProspector tCP in tableau)
+		{
+			foreach (int hid in tCP.slotDef.hiddenBy)
+			{
 				cp = FindCardByLayoutID(hid);
 				tCP.hiddenBy.Add(cp);
-            }
-        }
-		
+			}
+		}
+
 		// Set up the initial target card
 		MoveToTarget(Draw());
 
 		// Set up the Draw pile
 		UpdateDrawPile();
-    }
+	}
 
 	GolfProspector FindCardByLayoutID(int layoutID)
-    {
-		foreach(GolfProspector tCP in tableau)
-        {
-			if(tCP.layoutID == layoutID)
-            {
+	{
+		foreach (GolfProspector tCP in tableau)
+		{
+			if (tCP.layoutID == layoutID)
+			{
 				return (tCP);
-            }
-        }
+			}
+		}
 
 		return (null);
-    }
+	}
 
 	void SetTableauFaces()
-    {
-		foreach(GolfProspector cd in tableau)
-        {
+	{
+		foreach (GolfProspector cd in tableau)
+		{
 			bool faceUp = true;
-			foreach(GolfProspector cover in cd.hiddenBy)
-            {
+			foreach (GolfProspector cover in cd.hiddenBy)
+			{
 				if (cover.state == eCardState.tableau)
-                {
+				{
 					faceUp = false;
-                }
-            }
+				}
+			}
 
 			cd.faceUp = faceUp;
-        }
-    }
+		}
+	}
 
 	void MoveToDiscard(GolfProspector cd)
-    {
+	{
 		cd.state = eCardState.discard;
 		discardPile.Add(cd);
 		cd.transform.parent = layoutAnchor; // update its transform parent
-		
+
 		// position this card on the discardPile
-		cd.transform.localPosition = new Vector3(layout.multiplier.x * layout.discardPile.x, layout.multiplier.y * layout.discardPile.y, -layout.discardPile.layerID+0.5f);
+		cd.transform.localPosition = new Vector3(layout.multiplier.x * layout.discardPile.x, layout.multiplier.y * layout.discardPile.y, -layout.discardPile.layerID + 0.5f);
 
 		cd.faceUp = true;
 		// place it on top of the pile for depth sorting
 		cd.SetSortingLayerName(layout.discardPile.layerName);
 		cd.SetSortOrder(-100 + discardPile.Count);
-    }
+	}
 
 	void MoveToTarget(GolfProspector cd)
 	{
@@ -176,37 +179,37 @@ public class Prospector : MonoBehaviour {
 		cd.transform.localPosition = new Vector3(
 			layout.multiplier.x * layout.discardPile.x, layout.multiplier.y * layout.discardPile.y, -layout.discardPile.layerID);
 		cd.faceUp = true; // make it face up
-		// set the depth sorting
+						  // set the depth sorting
 		cd.SetSortingLayerName(layout.discardPile.layerName);
 		cd.SetSortOrder(0);
 	}
 
 	void UpdateDrawPile()
-    {
+	{
 		GolfProspector cd;
 
-		for(int i=0; i<drawPile.Count; i++)
-        {
+		for (int i = 0; i < drawPile.Count; i++)
+		{
 			cd = drawPile[i];
 			cd.transform.parent = layoutAnchor;
 
 			Vector2 dpStagger = layout.drawPile.stagger;
 			cd.transform.localPosition = new Vector3(
-				layout.multiplier.x * (layout.drawPile.x + i*dpStagger.x),
-				layout.multiplier.y * (layout.drawPile.y + i*dpStagger.y),
-				-layout.drawPile.layerID + 0.1f*i);
+				layout.multiplier.x * (layout.drawPile.x + i * dpStagger.x),
+				layout.multiplier.y * (layout.drawPile.y + i * dpStagger.y),
+				-layout.drawPile.layerID + 0.1f * i);
 
 			cd.faceUp = false;
 			cd.state = eCardState.drawpile;
 			cd.SetSortingLayerName(layout.drawPile.layerName);
 			cd.SetSortOrder(-10 * i);
-        }
-    }
+		}
+	}
 
 	public void CardClicked(GolfProspector cd)
-    {
-        switch (cd.state)
-        {
+	{
+		switch (cd.state)
+		{
 			case eCardState.target:
 				break;
 
@@ -221,14 +224,14 @@ public class Prospector : MonoBehaviour {
 
 			case eCardState.tableau:
 				bool validMatch = true;
-                if (!cd.faceUp)
-                {
+				if (!cd.faceUp)
+				{
 					validMatch = false;
-                }
-				if(!AdjacentRank(cd, target))
-                {
+				}
+				if (!AdjacentRank(cd, target))
+				{
 					validMatch = false;
-                }
+				}
 				if (!validMatch) { return; }
 
 				tableau.Remove(cd);// remove from tableau list
@@ -238,61 +241,61 @@ public class Prospector : MonoBehaviour {
 
 				FloatingScoreHandler(eScoreEvent.mine);
 				break;
-        }
+		}
 
 		CheckForGameOver();
-    }
+	}
 
 	void CheckForGameOver()
-    {
-        if (tableau.Count == 0)
-        {
+	{
+		if (tableau.Count == 0)
+		{
 			GameOver(true);
 			return;
-        }
-        if (drawPile.Count > 0)
-        {
+		}
+		if (drawPile.Count > 0)
+		{
 			return;
-        }
-		foreach(GolfProspector cd in tableau)
-        {
-			if(AdjacentRank(cd, target))
-            {
+		}
+		foreach (GolfProspector cd in tableau)
+		{
+			if (AdjacentRank(cd, target))
+			{
 				return;
-            }
-        }
+			}
+		}
 		GameOver(false);
-    }
+	}
 
 	void GameOver(bool won)
-    {
-        if (won)
-        {
+	{
+		if (won)
+		{
 			//print("Game Over. You won! :)");
 			ScoreManager.EVENT(eScoreEvent.gameWin);
 			FloatingScoreHandler(eScoreEvent.gameWin);
 		}
-        else
-        {
+		else
+		{
 			//print("Game Over. You Lost! :(");
 			ScoreManager.EVENT(eScoreEvent.gameLoss);
 			FloatingScoreHandler(eScoreEvent.gameLoss);
 		}
 
 		SceneManager.LoadScene("_Prospector_Scene_0");
-    }
+	}
 
 	public bool AdjacentRank(GolfProspector c0, GolfProspector c1)
-    {
-		if (!c0.faceUp || !c1.faceUp) 
-		{ 
-			return (false); 
+	{
+		if (!c0.faceUp || !c1.faceUp)
+		{
+			return (false);
 		}
 
 		if (Mathf.Abs(c0.rank - c1.rank) == 1)
-        {
+		{
 			return (true);
-        }
+		}
 
 		if (c0.rank == 1 && c1.rank == 13)
 		{
@@ -307,15 +310,15 @@ public class Prospector : MonoBehaviour {
 	}
 
 	void FloatingScoreHandler(eScoreEvent evt)
-    {
+	{
 		List<Vector2> fsPts;
 		switch (evt)
-        {
+		{
 			case eScoreEvent.draw:
 			case eScoreEvent.gameWin:
 			case eScoreEvent.gameLoss:
-				if(fsRun != null)
-                {
+				if (fsRun != null)
+				{
 					fsPts = new List<Vector2>();
 					fsPts.Add(fsPosRun);
 					fsPts.Add(fsPosMid2);
@@ -324,7 +327,7 @@ public class Prospector : MonoBehaviour {
 					fsRun.Init(fsPts, 0, 1);
 					fsRun.fontSizes = new List<float>(new float[] { 28, 36, 4 });
 					fsRun = null;
-                }
+				}
 				break;
 
 			case eScoreEvent.mine:
@@ -339,16 +342,16 @@ public class Prospector : MonoBehaviour {
 				fs = ScoreBoard.S.CreateFloatingScore(ScoreManager.CHAIN, fsPts);
 
 				fs.fontSizes = new List<float>(new float[] { 4, 5, 28 });
-				if(fsRun == null)
-                {
+				if (fsRun == null)
+				{
 					fsRun = fs;
 					// fs.reportFinishTo = null;
-                }
-                else
-                {
+				}
+				else
+				{
 					fs.reportFinishTo = fsRun.gameObject;
-                }
+				}
 				break;
-        }
-    }
+		}
+	}
 }

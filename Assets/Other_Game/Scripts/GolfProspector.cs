@@ -4,15 +4,15 @@ using UnityEngine;
 
 public enum eCardState
 {
-   drawpile,
-   target,
-   tableau,
-   discard
+    drawpile,
+    target,
+    tableau,
+    discard
 }
 
 public class GolfProspector : Card
 {
-    [Header("Set Dynamically: Card Prospector")]
+    [Header("Set Dynamically: Golf Prospector")]
 
     public eCardState state = eCardState.drawpile;
     public List<GolfProspector> hiddenBy = new List<GolfProspector>();

@@ -40,7 +40,7 @@ public class GolfSolitaire : MonoBehaviour
 
 	void Start()
 	{
-		ScoreBoard.S.score = ScoreManager.SCORE;
+		//ScoreBoard.S.score = ScoreManager.SCORE;
 
 		deck = GetComponent<Deck>();
 		deck.InitDeck(deckXML.text);
@@ -50,6 +50,7 @@ public class GolfSolitaire : MonoBehaviour
 		for (int cNum = 0; cNum < deck.cards.Count; cNum++)
         {
 			c = deck.cards[cNum];
+			c.transform.localPosition = new Vector3(cNum % 13, cNum / 13 * 4, 0);
         }
 
 		layout = GetComponent<Layout>();
