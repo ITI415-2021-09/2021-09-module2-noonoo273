@@ -15,7 +15,7 @@ public class ScoreBoard : MonoBehaviour
 
     private Transform canvasTrans;
 
-    public int score
+    public int Score
     {
         get
         {
@@ -56,15 +56,16 @@ public class ScoreBoard : MonoBehaviour
 
     public void FSCallback(FloatingScore fs)
     {
-        score += fs.score;
+        Score += fs.Score;
     }
+
 
     public FloatingScore CreateFloatingScore(int amt, List<Vector2> pts)
     {
         GameObject go = Instantiate<GameObject>(prefabFloatingScore);
         go.transform.SetParent(canvasTrans);
         FloatingScore fs = go.GetComponent<FloatingScore>();
-        fs.score = amt;
+        fs.Score = amt;
         fs.reportFinishTo = this.gameObject;
         fs.Init(pts);
         return (fs);

@@ -76,7 +76,7 @@ public class Prospector : MonoBehaviour
 
 	void Start()
 	{
-		ScoreBoard.S.score = ScoreManager.SCORE;
+		ScoreBoard.S.Score = ScoreManager.SCORE;
 
 		deck = GetComponent<Deck>();
 		deck.InitDeck(deckXML.text);
@@ -315,7 +315,7 @@ public class Prospector : MonoBehaviour
 	void GameOver(bool won)
 	{
 		int score = ScoreManager.SCORE;
-		if (fsRun != null) score += fsRun.score;
+		if (fsRun != null) score += fsRun.Score;
 
 		if (won)
 		{

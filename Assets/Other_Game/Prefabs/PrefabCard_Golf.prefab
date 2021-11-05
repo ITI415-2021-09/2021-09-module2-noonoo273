@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4811181370057604226}
   - component: {fileID: 4608352580882364675}
   m_Layer: 0
-  m_Name: PrefabCard
+  m_Name: PrefabCard_Golf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

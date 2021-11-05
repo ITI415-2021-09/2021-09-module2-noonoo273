@@ -20,7 +20,8 @@ public class FloatingScore : MonoBehaviour
     protected int _score = 0;
     public string scoreString;
 
-    public int score
+    // score property sets _score and scoreString
+    public int Score
     {
         get
         {
@@ -29,7 +30,7 @@ public class FloatingScore : MonoBehaviour
         set
         {
             _score = value;
-            scoreString = _score.ToString("NO"); //"NO" adds commas to num
+            scoreString = _score.ToString("N0"); //"NO" adds commas to num
 
             GetComponent<Text>().text = scoreString;
         }
@@ -73,7 +74,7 @@ public class FloatingScore : MonoBehaviour
     {
         // when this callback is called by SendMessage,
         // add the score from the calling FloatingScore
-        score += fs.score;
+        Score += fs.Score;
     }
 
 

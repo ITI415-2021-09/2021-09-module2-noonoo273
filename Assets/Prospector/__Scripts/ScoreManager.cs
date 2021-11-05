@@ -28,7 +28,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (S == null)
         {
-            S = this;
+            S = this; // set private singleton
         }
         else
         {
@@ -40,19 +40,22 @@ public class ScoreManager : MonoBehaviour
         {
             HIGH_SCORE = PlayerPrefs.GetInt("ProspectorHighScore");
         }
+        // add score from last round which will be >0 if it was a win
         score += SCORE_FROM_PREV_ROUND;
+
+        //reset SCORE_FROM_PREV_ROUND
         SCORE_FROM_PREV_ROUND = 0;
     }
 
     static public void EVENT(eScoreEvent evt)
     {
-        try 
+        try // try-catch stops an error from breaking your progress
         { 
             S.Event(evt); 
         }
         catch (System.NullReferenceException nre)
         {
-            Debug.LogError("ScoreManager:EVENT() called While S=null. \n" + nre);
+            Debug.LogError("ScoreManager:EVENT() called while S=null. \n" + nre);
         }
     }
 
@@ -68,8 +71,8 @@ public class ScoreManager : MonoBehaviour
                 scoreRun = 0;
                 break;
             
-            case eScoreEvent.mine:
-                chain++;
+            case eScoreEvent.mine: // remove mine card
+                chain++; // increase score chain
                 scoreRun += chain;
                 break;
         }
@@ -77,11 +80,13 @@ public class ScoreManager : MonoBehaviour
         switch (evt)
         {
             case eScoreEvent.gameWin:
+                // if its a win add score to next round
                 SCORE_FROM_PREV_ROUND = score;
                 print("You Won This Round! Round Score: " + score);
                 break;
 
             case eScoreEvent.gameLoss:
+                // if loss check against high score
                 if (HIGH_SCORE <= score)
                 {
                     print("You got the High Score! High Score: " + score);
