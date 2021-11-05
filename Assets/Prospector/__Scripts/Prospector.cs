@@ -20,7 +20,8 @@ public class Prospector : MonoBehaviour
 	public Vector2 fsPosRun = new Vector2(0.5f, 0.75f);
 	public Vector2 fsPosMid2 = new Vector2(0.4f, 1.0f);
 	public Vector2 fsPosEnd = new Vector2(0.5f, 0.95f);
-
+	public float reloadDelay = 2f; // 2 sec delay between rounds
+	public Text gameOverText, roundResultText, highScoreText;
 
 
 	[Header("Set Dynamically")]
@@ -36,6 +37,41 @@ public class Prospector : MonoBehaviour
 	void Awake()
 	{
 		S = this;
+		SetUpUITexts();
+	}
+
+	void SetUpUITexts()
+	{
+		// set up highscore ui text
+		GameObject go = GameObject.Find("HighScore");
+		if (go != null)
+		{
+			highScoreText = go.GetComponent<Text>();
+		}
+
+		int highScore = ScoreManager.HIGH_SCORE;
+		string hScore = "High Score: " + Utils.AddCommasToNumber(highScore);
+		go.GetComponent<Text>().text = hScore;
+
+		go = GameObject.Find("GameOver");
+		if (go != null)
+		{
+			gameOverText = go.GetComponent<Text>();
+		}
+
+		go = GameObject.Find("RoundResult");
+		if (go != null)
+		{
+			roundResultText = go.GetComponent<Text>();
+		}
+
+		ShowResultsUI(false);
+	}
+
+	void ShowResultsUI(bool show)
+	{
+		gameOverText.gameObject.SetActive(show);
+		roundResultText.gameObject.SetActive(show);
 	}
 
 	void Start()
@@ -50,6 +86,7 @@ public class Prospector : MonoBehaviour
 		for (int cNum = 0; cNum < deck.cards.Count; cNum++)
 		{
 			c = deck.cards[cNum];
+			c.transform.localPosition = new Vector3(cNum % 13, cNum / 13 * 4, 0);
 		}
 
 		layout = GetComponent<Layout>();
@@ -211,14 +248,15 @@ public class Prospector : MonoBehaviour
 		switch (cd.state)
 		{
 			case eCardState.target:
+				// Clicking the card does nothing
 				break;
 
 			case eCardState.drawpile:
-				MoveToDiscard(target);
-				MoveToTarget(Draw());
+				MoveToDiscard(target); // moves target to discard pile
+				MoveToTarget(Draw()); // moves the next drawn card to target
 				UpdateDrawPile();
-				ScoreManager.EVENT(eScoreEvent.draw);
 
+				ScoreManager.EVENT(eScoreEvent.draw);
 				FloatingScoreHandler(eScoreEvent.draw);
 				break;
 
@@ -226,6 +264,7 @@ public class Prospector : MonoBehaviour
 				bool validMatch = true;
 				if (!cd.faceUp)
 				{
+					// if card is face down, not valid
 					validMatch = false;
 				}
 				if (!AdjacentRank(cd, target))
@@ -237,8 +276,8 @@ public class Prospector : MonoBehaviour
 				tableau.Remove(cd);// remove from tableau list
 				MoveToTarget(cd); // make it target card
 				SetTableauFaces(); // update tableau card face-ups
-				ScoreManager.EVENT(eScoreEvent.mine);
 
+				ScoreManager.EVENT(eScoreEvent.mine);
 				FloatingScoreHandler(eScoreEvent.mine);
 				break;
 		}
@@ -253,10 +292,14 @@ public class Prospector : MonoBehaviour
 			GameOver(true);
 			return;
 		}
+
+
 		if (drawPile.Count > 0)
 		{
 			return;
 		}
+
+
 		foreach (GolfProspector cd in tableau)
 		{
 			if (AdjacentRank(cd, target))
@@ -264,39 +307,70 @@ public class Prospector : MonoBehaviour
 				return;
 			}
 		}
+
+
 		GameOver(false);
 	}
 
 	void GameOver(bool won)
 	{
+		int score = ScoreManager.SCORE;
+		if (fsRun != null) score += fsRun.score;
+
 		if (won)
 		{
+			gameOverText.text = "Round Over";
+			roundResultText.text = "You won this round! \nRound Score: " + score;
+			ShowResultsUI(true);
+
 			//print("Game Over. You won! :)");
 			ScoreManager.EVENT(eScoreEvent.gameWin);
 			FloatingScoreHandler(eScoreEvent.gameWin);
 		}
 		else
 		{
+			gameOverText.text = "Game Over";
+			if (ScoreManager.HIGH_SCORE <= score)
+			{
+				string str = "You got the high score! \nHigh Score: " + score;
+				roundResultText.text = str;
+			}
+			else
+			{
+				roundResultText.text = "Your final score was: " + score;
+			}
+			ShowResultsUI(true);
+
 			//print("Game Over. You Lost! :(");
 			ScoreManager.EVENT(eScoreEvent.gameLoss);
 			FloatingScoreHandler(eScoreEvent.gameLoss);
 		}
 
-		SceneManager.LoadScene("_Prospector_Scene_0");
+		// SceneManager.LoadScene("_Other_GameScene");
+		Invoke("ReloadLevel", reloadDelay);
+		ReloadLevel();
+	}
+
+	void ReloadLevel()
+	{
+		SceneManager.LoadScene("_Other_GameScene");
 	}
 
 	public bool AdjacentRank(GolfProspector c0, GolfProspector c1)
 	{
+		// if either card is face down, it's not adjacent
 		if (!c0.faceUp || !c1.faceUp)
 		{
 			return (false);
 		}
 
+		// if they are 1 apart they are adjacent
 		if (Mathf.Abs(c0.rank - c1.rank) == 1)
 		{
 			return (true);
 		}
 
+		// if one is Ace and other is King, they are adjacent
 		if (c0.rank == 1 && c1.rank == 13)
 		{
 			return (true);
@@ -341,7 +415,7 @@ public class Prospector : MonoBehaviour
 				fsPts.Add(fsPosMid);
 				fs = ScoreBoard.S.CreateFloatingScore(ScoreManager.CHAIN, fsPts);
 
-				fs.fontSizes = new List<float>(new float[] { 4, 5, 28 });
+				fs.fontSizes = new List<float>(new float[] { 4, 50, 28 });
 				if (fsRun == null)
 				{
 					fsRun = fs;
