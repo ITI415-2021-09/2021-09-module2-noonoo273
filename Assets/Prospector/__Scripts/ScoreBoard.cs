@@ -69,10 +69,4 @@ public class ScoreBoard : MonoBehaviour
         fs.Init(pts);
         return (fs);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

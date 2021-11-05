@@ -29,7 +29,8 @@ public class FloatingScore : MonoBehaviour
         set
         {
             _score = value;
-            scoreString = _score.ToString("NO");
+            scoreString = _score.ToString("NO"); //"NO" adds commas to num
+
             GetComponent<Text>().text = scoreString;
         }
     }
@@ -38,11 +39,10 @@ public class FloatingScore : MonoBehaviour
     public List<float> fontSizes;
     public float timeStart = -1f;
     public float timeDuration = 1f;
-    public string easingCurve = Easing.InOut;
+    public string easingCurve = Easing.InOut; //using Easing in Utils.cs
 
     public GameObject reportFinishTo = null;
     private RectTransform rectTrans;
-    internal object reportFinshTo;
     private Text txt;
 
     public void Init(List<Vector2> ePts, float eTimeS=0, float eTimeD = 1)
@@ -54,22 +54,25 @@ public class FloatingScore : MonoBehaviour
 
         bezierPts = new List<Vector2>(ePts);
 
-        if(ePts.Count == 1)
+        if(ePts.Count == 1) //if theres only one point
+            //...then just go there
         {
             transform.position = ePts[0];
             return;
         }
 
-        if (eTimeS == 0)
-            eTimeS = Time.time;
-            timeStart = eTimeS;
-            timeDuration = eTimeD;
+        // if eTimeS is default, just start at current time
+        if (eTimeS == 0) eTimeS = Time.time;
+        timeStart = eTimeS;
+        timeDuration = eTimeD;
             
         state = eFSState.pre;
     }
 
     public void FSCallback(FloatingScore fs)
     {
+        // when this callback is called by SendMessage,
+        // add the score from the calling FloatingScore
         score += fs.score;
     }
 
@@ -77,6 +80,7 @@ public class FloatingScore : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if this is not moving just return
         if (state == eFSState.idle) { return; }
 
         float u = (Time.time - timeStart) / timeDuration;
@@ -95,6 +99,8 @@ public class FloatingScore : MonoBehaviour
                 if (reportFinishTo != null)
                 {
                     reportFinishTo.SendMessage("FSCallback", this);
+                    // now that message has been sent 
+                    // destory game object
                     Destroy(gameObject);
                 }
                 else
